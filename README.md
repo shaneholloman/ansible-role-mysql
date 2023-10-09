@@ -1,6 +1,6 @@
 # Ansible Role: MySQL
 
-[![CI](https://github.com/shaneholloman-org/ansible-role-mysql/actions/workflows/ci.yml/badge.svg)](https://github.com/shaneholloman-org/ansible-role-mysql/actions/workflows/ci.yml)
+[![CI](https://github.com/shaneholloman/ansible-role-mysql/actions/workflows/ci.yml/badge.svg)](https://github.com/shaneholloman/ansible-role-mysql/actions/workflows/ci.yml)
 
 Installs and configures MySQL or MariaDB server on RHEL/CentOS or Debian/Ubuntu servers.
 
@@ -236,4 +236,3 @@ MIT / BSD
 ## Author Information
 
 This role was created in 2023
-
