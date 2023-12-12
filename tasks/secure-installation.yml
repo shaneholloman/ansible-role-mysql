@@ -1,6 +1,6 @@
 ---
 - name: Ensure default user is present.
-  mysql_user:
+  community.mysql.mysql_user:
     name: "{{ mysql_user_name }}"
     host: 'localhost'
     password: "{{ mysql_user_password }}"
@@ -43,8 +43,10 @@
   ansible.builtin.shell: >
     mysql -u root -NBe
     "ALTER USER '{{ mysql_root_username }}'@'{{ item }}'
-     IDENTIFIED WITH mysql_native_password BY '{{ mysql_root_password }}'; FLUSH PRIVILEGES;"
-  with_items: "{{ mysql_root_hosts.stdout_lines|default([]) }}"
+    IDENTIFIED WITH mysql_native_password BY '{{ mysql_root_password }}'; FLUSH PRIVILEGES;"
+  with_items: "{{ mysql_root_hosts.stdout_lines | default([]) }}"
+  register: root_password_update
+  changed_when: "'Query OK' in root_password_update.stdout"
   when: >
     ((mysql_install_packages | bool) or mysql_root_password_update)
     and ('5.7.' in mysql_cli_version.stdout or '8.0.' in mysql_cli_version.stdout)
@@ -54,7 +56,9 @@
   ansible.builtin.shell: >
     mysql -NBe
     'SET PASSWORD FOR "{{ mysql_root_username }}"@"{{ item }}" = PASSWORD("{{ mysql_root_password }}"); FLUSH PRIVILEGES;'
-  with_items: "{{ mysql_root_hosts.stdout_lines|default([]) }}"
+  with_items: "{{ mysql_root_hosts.stdout_lines | default([]) }}"
+  register: root_password_update
+  changed_when: "'Query OK' in root_password_update.stdout"
   when: >
     ((mysql_install_packages | bool) or mysql_root_password_update)
     and ('5.7.' not in mysql_cli_version.stdout and '8.0.' not in mysql_cli_version.stdout)
@@ -76,13 +80,13 @@
   check_mode: false
 
 - name: Remove anonymous MySQL users.
-  mysql_user:
+  community.mysql.mysql_user:
     name: ""
     host: "{{ item }}"
     state: absent
-  with_items: "{{ mysql_anonymous_hosts.stdout_lines|default([]) }}"
+  with_items: "{{ mysql_anonymous_hosts.stdout_lines | default([]) }}"
 
 - name: Remove MySQL test database.
-  mysql_db:
+  community.mysql.mysql_db:
     name: 'test'
     state: absent
