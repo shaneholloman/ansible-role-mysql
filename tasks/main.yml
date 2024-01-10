@@ -5,15 +5,15 @@
 
 # Setup/install tasks.
 - name: Include setup tasks for RedHat
-  ansible.builtin.include_tasks: setup-RedHat.yml
+  ansible.builtin.include_tasks: setup-redhat.yml
   when: ansible_os_family == 'RedHat'
 
 - name: Include setup tasks for Debian
-  ansible.builtin.include_tasks: setup-Debian.yml
+  ansible.builtin.include_tasks: setup-debian.yml
   when: ansible_os_family == 'Debian'
 
 - name: Include setup tasks for ArchLinux
-  ansible.builtin.include_tasks: setup-ArchLinux.yml
+  ansible.builtin.include_tasks: setup-archlinux.yml
   when: ansible_os_family == 'ArchLinux'
 
 - name: Check if MySQL packages were installed

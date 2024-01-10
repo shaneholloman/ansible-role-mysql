@@ -172,13 +172,13 @@ If you want to install MySQL from the official repository instead of installing 
 ```yaml
   pre_tasks:
     - name: Install the MySQL repo.
-      yum:
+      ansible.builtin.yum:
         name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
         state: present
       when: ansible_os_family == "RedHat"
 
     - name: Override variables for MySQL (RedHat).
-      set_fact:
+      ansible.builtin.set_fact:
         mysql_daemon: mysqld
         mysql_packages: ['mysql-server']
         mysql_log_error: /var/log/mysqld.err
