@@ -1,4 +1,4 @@
-# Ansible Role: MySQL
+# Ansible Role: `mysql`
 
 [![CI](https://github.com/shaneholloman/ansible-role-mysql/actions/workflows/ci.yml/badge.svg)](https://github.com/shaneholloman/ansible-role-mysql/actions/workflows/ci.yml)
 
@@ -8,7 +8,7 @@ Installs and configures MySQL or MariaDB server on RHEL/CentOS or Debian/Ubuntu 
 
 No special requirements; note that this role requires root access, so either run it in a playbook with a global `become: yes`, or invoke the role in your playbook like:
 
-```yaml
+```yml
 - hosts: database
   roles:
     - role: shaneholloman.mysql
@@ -19,7 +19,7 @@ No special requirements; note that this role requires root access, so either run
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
-```yaml
+```yml
 mysql_user_home: /root
 mysql_user_name: root
 mysql_user_password: root
@@ -27,7 +27,7 @@ mysql_user_password: root
 
 The home directory inside which Python MySQL settings will be stored, which Ansible will use when connecting to MySQL. This should be the home directory of the user which runs this Ansible role. The `mysql_user_name` and `mysql_user_password` can be set if you are running this role under a non-root user account and want to set a non-root user.
 
-```yaml
+```yml
 mysql_root_home: /root
 mysql_root_username: root
 mysql_root_password: root
@@ -35,41 +35,42 @@ mysql_root_password: root
 
 The MySQL root user account details.
 
-```yaml
+```yml
 mysql_root_password_update: false
 ```
 
 Whether to force update the MySQL root user's password. By default, this role will only change the root user's password when MySQL is first configured. You can force an update by setting this to `yes`.
 
-> Note: If you get an error like `ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)` after a failed or interrupted playbook run, this usually means the root password wasn't originally updated to begin with. Try either removing  the `.my.cnf` file inside the configured `mysql_user_home` or updating it and setting `password=''` (the insecure default password). Run the playbook again, with `mysql_root_password_update` set to `yes`, and the setup should complete.
-> Note: If you get an error like `ERROR 1698 (28000): Access denied for user 'root'@'localhost' (using password: YES)` when trying to log in from the CLI you might need to run as root or sudoer.
+> **Note**: If you get an error like `ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)` after a failed or interrupted playbook run, this usually means the root password wasn't originally updated to begin with. Try either removing  the `.my.cnf` file inside the configured `mysql_user_home` or updating it and setting `password=''` (the insecure default password). Run the playbook again, with `mysql_root_password_update` set to `yes`, and the setup should complete.
+>
+> **Note**: If you get an error like `ERROR 1698 (28000): Access denied for user 'root'@'localhost' (using password: YES)` when trying to log in from the CLI you might need to run as root or sudoer.
 
-```yaml
+```yml
 mysql_enabled_on_startup: true
 ```
 
 Whether MySQL should be enabled on startup.
 
-```yaml
+```yml
 mysql_config_file: *default value depends on OS*
 mysql_config_include_dir: *default value depends on OS*
 ```
 
 The main my.cnf configuration file and include directory.
 
-```yaml
+```yml
 overwrite_global_mycnf: true
 ```
 
 Whether the global my.cnf should be overwritten each time this role is run. Setting this to `no` tells Ansible to only create the `my.cnf` file if it doesn't exist. This should be left at its default value (`yes`) if you'd like to use this role's variables to configure MySQL.
 
-```yaml
+```yml
 mysql_config_include_files: []
 ```
 
 A list of files that should override the default global my.cnf. Each item in the array requires a "src" parameter which is a path to a file. An optional "force" parameter can force the file to be updated each time ansible runs.
 
-```yaml
+```yml
 mysql_databases: []
 ```
 
@@ -77,7 +78,7 @@ The MySQL databases to create. A database has the values `name`, `encoding` (def
 
 You can also delete a database (or ensure it's not on the server) by setting `state` to `absent` (defaults to `present`).
 
-```yaml
+```yml
 mysql_users: []
 ```
 
@@ -93,7 +94,7 @@ The MySQL users and their privileges. A user has the values:
 
 The formats of these are the same as in the `mysql_user` module.
 
-```yaml
+```yml
 mysql_packages:
   - mysql
   - mysql-server
@@ -101,19 +102,19 @@ mysql_packages:
 
 (OS-specific, RedHat/CentOS defaults listed here) Packages to be installed. In some situations, you may need to add additional packages, like `mysql-devel`.
 
-```yaml
+```yml
 mysql_enablerepo: ""
 ```
 
 (RedHat/CentOS only) If you have enabled any additional repositories (might I suggest shaneholloman.epel or shaneholloman.remi), those repositories can be listed under this variable (e.g. `remi,epel`). This can be handy, as an example, if you want to install later versions of MySQL.
 
-```yaml
+```yml
 mysql_python_package_debian: python3-mysqldb
 ```
 
 (Ubuntu/Debian only) If you need to explicitly override the MySQL Python package, you can set it here. Set this to `python-mysqldb` if using older distributions running Python 2.
 
-```yaml
+```yml
 mysql_port: "3306"
 mysql_bind_address: '0.0.0.0'
 mysql_datadir: /var/lib/mysql
@@ -123,16 +124,16 @@ mysql_pid_file: *default value depends on OS*
 
 Default MySQL connection configuration.
 
-```yaml
+```yml
 mysql_log_file_group: mysql *adm on Debian*
 mysql_log: ""
 mysql_log_error: *default value depends on OS*
 mysql_syslog_tag: *default value depends on OS*
-```yaml
+```
 
 MySQL logging configuration. Setting `mysql_log` (the general query log) or `mysql_log_error` to `syslog` will make MySQL log to syslog using the `mysql_syslog_tag`.
 
-```yaml
+```yml
 mysql_slow_query_log_enabled: false
 mysql_slow_query_log_file: *default value depends on OS*
 mysql_slow_query_time: 2
@@ -140,7 +141,7 @@ mysql_slow_query_time: 2
 
 Slow query log settings. Note that the log file will be created by this role, but if you're running on a server with SELinux or AppArmor, you may need to add this path to the allowed paths for MySQL, or disable the mysql profile. For example, on Debian/Ubuntu, you can run `sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/usr.sbin.mysqld && sudo service apparmor restart`.
 
-```yaml
+```yml
 mysql_key_buffer_size: "256M"
 mysql_max_allowed_packet: "64M"
 mysql_table_open_cache: "256"
@@ -149,7 +150,7 @@ mysql_table_open_cache: "256"
 
 The rest of the settings in `defaults/main.yml` control MySQL's memory usage and some other common settings. The default values are tuned for a server where MySQL can consume 512 MB RAM, so you should consider adjusting them to suit your particular server better.
 
-```yaml
+```yml
 mysql_server_id: "1"
 mysql_max_binlog_size: "100M"
 mysql_binlog_format: "ROW"
@@ -169,7 +170,7 @@ If the replication master has different IP addresses where you are running ansib
 
 If you want to install MySQL from the official repository instead of installing the system default MariaDB equivalents, you can add the following `pre_tasks` task in your playbook:
 
-```yaml
+```yml
   pre_tasks:
     - name: Install the MySQL repo.
       ansible.builtin.yum:
@@ -196,10 +197,12 @@ This role works with either MySQL or a compatible version of MariaDB. On RHEL/Ce
 
 On Ubuntu, the package names are named differently, so the `mysql_package` variable needs to be altered. Set the following variables (at a minimum):
 
-    mysql_packages:
-      - mariadb-client
-      - mariadb-server
-      - python-mysqldb
+```yml
+mysql_packages:
+  - mariadb-client
+  - mariadb-server
+  - python-mysqldb
+```
 
 ## Dependencies
 
@@ -209,29 +212,33 @@ If you have only installed `ansible-core`, be sure to require `community.mysql` 
 
 ## Example Playbook
 
-    - hosts: db-servers
-      become: yes
-      vars_files:
-        - vars/main.yml
-      roles:
-        - { role: shaneholloman.mysql }
+```yml
+- hosts: db-servers
+  become: yes
+  vars_files:
+    - vars/main.yml
+  roles:
+    - { role: shaneholloman.mysql }
+```
 
 *Inside `vars/main.yml`*:
 
-    mysql_root_password: super-secure-password
-    mysql_databases:
-      - name: example_db
-        encoding: latin1
-        collation: latin1_general_ci
-    mysql_users:
-      - name: example_user
-        host: "%"
-        password: similarly-secure-password
-        priv: "example_db.*:ALL"
+```yml
+mysql_root_password: super-secure-password
+mysql_databases:
+  - name: example_db
+    encoding: latin1
+    collation: latin1_general_ci
+mysql_users:
+  - name: example_user
+    host: "%"
+    password: similarly-secure-password
+    priv: "example_db.*:ALL"
+```
 
 ## License
 
-MIT / BSD
+Unlicense
 
 ## Author Information
 
